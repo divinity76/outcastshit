@@ -1,32 +1,60 @@
 <?php
 error_reporting(E_ALL);
+
+function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+    if (!(error_reporting() & $errno)) {
+        // This error code is not included in error_reporting
+        return;
+    }
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+}
+set_error_handler("exception_error_handler");
+
 $curlh=hhb_curl_init();
-$username="123123";
+$username="177777";
 $password="nigerian";
 $charactername="Nigerian";
-
+$starttime=microtime(true);
 login($curlh,$username,$password);
-for($i=0;$i<99;++$i){
+$total=500;
+for($i=0;$i<$total;++$i){
 	try{
 createCharacter($curlh,$charactername);
-}catch(Exception $ex){}
+}catch(Exception $ex){
+}
+try{
 LogInAndCastMoneyAndLogOut();
+}catch(Exception $ex){
+		echo "failed login! error: ".$ex->getMessage(),PHP_EOL;
+
+}
 	try{
 deleteCharacter($curlh,$charactername,$username);
 }catch(Exception $ex){}
 }
+echo $total." characters: used ".(microtime(true)-$starttime). " seconds..";
 
 
 
 
-function LogInAndCastMoneyAndLogOut(){//TODO: username, account name, etc... now its hardcoded! :O
+function LogInAndCastMoneyAndLogOut(){
 	
 $socket=socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
-assert($socket!=false);
-assert(socket_bind($socket,0,7171)!==false);
-assert(socket_connect($socket,
+if($socket==false){
+	   echo "socket_create() failed: reason: " . socket_strerror(socket_last_error()) . "\n";
+	   return false;
+}
+assert(socket_set_block ( $socket)===true);
+assert(socket_bind($socket,0,mt_rand(1024,5000))!==false);//mt_rand isn't reliable 100% of the time...
+if(socket_connect($socket,
 '87.92.70.35',7171
-)===true);
+)!==true){
+	   echo "socket_connect() failed: reason: " . socket_strerror(socket_last_error()) . "\n";
+	   return false;
+	
+}
+
+
 $packets=array();
 //$packets[]=hex2bin(str_replace(" ","","00"));
 $packets[]=hex2bin(str_replace(" ","","C9 00 0A 03 64 F2 FF 07 00 66 75 63 6B 79 6F 75 19 00 78 58 35 38 34 38 4A 67 6A 72 49 45 70 6F 77 6F 4B 46 6B 66 72 69 72 47 4A 1C 00 31 4F 2B 45 56 48 66 68 6B 47 67 45 32 4C 32 34 48 61 69 4C 48 76 73 51 59 43 67 3D F7 02 00 71 B6 02 00 08 00 4E 69 67 65 72 69 61 6E 08 00 6E 69 67 65 72 69 61 6E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 "));
@@ -35,12 +63,13 @@ $packets[]=hex2bin(str_replace(" ","","0A 00 82 FF FF 03 00 00 33 0B 00 00 "));
 $packets[]=hex2bin(str_replace(" ","","0F 00 78 FF FF 40 00 00 DB 0B 00 EA 03 EC 03 07 0F "));
  
 $replyBuf="";
+$fullPacket="";
 foreach($packets as $packet){
 $sent=socket_write($socket,$packet,strlen($packet));
-usleep(80000);
-
+//usleep(50000);
 }
-sleep(1);
+
+//sleep(1);
 //sleep(9);
 
 
