@@ -61,6 +61,7 @@ $packets[]=hex2bin(str_replace(" ","","C9 00 0A 03 64 F2 FF 07 00 66 75 63 6B 79
 $packets[]=hex2bin(str_replace(" ","","04 00 A0 02 00 01 03 00 98 03 00 03 00 98 04 00 03 00 98 03 00 03 00 98 04 00 "));
 $packets[]=hex2bin(str_replace(" ","","0A 00 82 FF FF 03 00 00 33 0B 00 00 "));
 $packets[]=hex2bin(str_replace(" ","","0F 00 78 FF FF 40 00 00 DB 0B 00 EA 03 EC 03 07 0F "));
+$packets[]=hex2bin(str_replace(" ","","01 00 14"));//explicit logout packet
  
 $replyBuf="";
 $fullPacket="";
