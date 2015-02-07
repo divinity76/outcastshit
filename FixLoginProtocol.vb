@@ -1,3 +1,4 @@
+'make it possible to login with the 7.6 cipsoft client with the modified login protocol of the custom client.
 Public Function HHBFilter(ByRef Bytes() As Byte)
 Dim count As Integer
 count = UBound(Bytes)
@@ -11,4 +12,3 @@ If ComparePackets(Bytes, buf) Then
 GetCheatPacket Bytes, "04 00 A0 02 00 01 03 00 98 03 00 03 00 98 04 00 03 00 98 03 00 03 00 98 04 00 "
 End If
 Exit Function
-
