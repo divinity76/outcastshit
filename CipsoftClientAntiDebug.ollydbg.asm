@@ -23,3 +23,28 @@ JMP LONG 0047DEA9
 0007DEDD   C645 6F 32       MOV BYTE PTR SS:[EBP+6F],32 ; second toes byte 50
 0007DEE1   C645 70 32       MOV BYTE PTR SS:[EBP+70],32 ; third toes byte 50
 0007DEE5  ^E9 0E9AFCFF      JMP 000478F8
+
+
+
+;at 004348FA
+;should be 
+MOV EAX,ESI;2 bytes
+SHL EAX,5;3 bytes
+CDQ ; 1 byte
+;replace with
+JMP LONG 0047DF10 ; 5 bytes
+nop; 1 byte
+;at 0047DF10 should be a bunch of 0x0000000000000000
+;replace with
+MOV EAX,ESI
+SHL EAX,5
+test EAX,EAX
+JNE SHORT eax_is_not_zero
+mov EAX,1
+:eax_is_not_zero
+CDQ
+test ECX,ECX
+JNE SHORT ecx_is_not_zero
+mov ECX,1
+:ecx_is_not_zero
+JMP LONG 00434900
