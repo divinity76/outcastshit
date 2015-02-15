@@ -48,3 +48,56 @@ JNE SHORT ecx_is_not_zero
 mov ECX,1
 :ecx_is_not_zero
 JMP LONG 00434900
+
+
+
+
+
+
+
+
+
+
+;in 00459AF3 should find:
+00459AF3  |> 3B35 506E5F00  CMP ESI,DWORD PTR DS:[5F6E50]
+00459AF9  |. 7F 0C          JG SHORT Tibia_mc.00459B07;ERROR
+00459AFB  |. 8B4C24 24      MOV ECX,DWORD PTR SS:[ESP+24]
+00459AFF  |. 3B0D 546E5F00  CMP ECX,DWORD PTR DS:[5F6E54]
+00459B05  |. 7E 1B          JLE SHORT Tibia_mc.00459B22;NOT ERROR
+;replace with:
+00459AF3     E9 43440200    JMP Tibia_mc.0047DF3B
+00459AF8     90             NOP
+00459AF9     90             NOP
+00459AFA     90             NOP
+00459AFB     90             NOP
+00459AFC     90             NOP
+00459AFD     90             NOP
+00459AFE     90             NOP
+00459AFF     90             NOP
+00459B00     90             NOP
+00459B01     90             NOP
+00459B02     90             NOP
+00459B03     90             NOP
+00459B04     90             NOP
+00459B05     90             NOP
+00459B06     90             NOP
+;at 0047DF3B should be a bunch of 0x0000000000000000000
+;replace with
+;assertion: ToRect.width<=Rect[STRETCH_SURFACE].right && ToRect.height<=Rect[STRETCH_SURFACE].bottom
+;ToRect.width: ESI AND ??? (TODO: FIND THIS)
+;Rect[STRETCH_SURFACE].right: DWORD PTR DS:[5F6E50]
+;ToRect.height: ECX AND DWORD PTR SS:[ESP+24]
+:Rect[STRETCH_SURFACE].bottom: DWORD PTR DS:[5F6E54]
+:check_ToRect_width
+CMP ESI,DWORD PTR DS:[5F6E50]; ToRect.width <= Rect[STRETCH_SURFACE].right ?
+JLE SHORT check_ToRect_height ; jmp if yes
+SUB ESI,1 ;TODO: find and subtract from the original location of ToRect.width !..
+JMP SHORT check_ToRect_width
+:check_ToRect_height
+MOV ECX,DWORD PTR SS:[ESP+24] ; update ToRect.height
+CMP ECX,DWORD PTR DS:[5F6E54] ; ToRect.height<= Rect[STRETCH_SURFACE].bottom ? 
+JLE SHORT ToRect_height_ok ; jmp if yes
+SUB DWORD PTR SS:[ESP+24],1
+JMP SHORT check_ToRect_height
+:ToRect_height_ok
+JMP LONG 00459B22;i wonder what 00459B1F is, as it's not dead code (ADD ESP,14), but is seemingly unreachable...
