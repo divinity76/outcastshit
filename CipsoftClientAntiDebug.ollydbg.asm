@@ -101,3 +101,28 @@ SUB DWORD PTR SS:[ESP+24],1
 JMP SHORT check_ToRect_height
 :ToRect_height_ok
 JMP LONG 00459B22;i wonder what 00459B1F is, as it's not dead code (ADD ESP,14), but is seemingly unreachable...
+
+
+
+
+
+
+
+;stop the client from debugging when opening.. certain custom containers (weird monster bodies, weird backpacks, etc)
+;at 004344DE should be:
+004344DE   8BC6             MOV EAX,ESI
+004344E0   C1E0 05          SHL EAX,5
+004344E3   99               CDQ
+;replace with
+JMP LONG 0047DEF5
+NOP
+;then at 0047DEF5:
+;should be a bunch of 0x0000000000000000000, replace with:
+MOV EAX, ESI
+SHL EAX,5
+CDQ
+CMP ECX,0
+JNE ecx_is_not_zero
+MOV ECX,1
+:ecx_is_not_zero
+JMP 004344E4
