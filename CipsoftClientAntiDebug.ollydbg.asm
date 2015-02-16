@@ -87,7 +87,7 @@ JMP LONG 00434900
 ;ToRect.width: ESI AND ??? (TODO: FIND THIS)
 ;Rect[STRETCH_SURFACE].right: DWORD PTR DS:[5F6E50]
 ;ToRect.height: ECX AND DWORD PTR SS:[ESP+24]
-:Rect[STRETCH_SURFACE].bottom: DWORD PTR DS:[5F6E54]
+;Rect[STRETCH_SURFACE].bottom: DWORD PTR DS:[5F6E54]
 :check_ToRect_width
 CMP ESI,DWORD PTR DS:[5F6E50]; ToRect.width <= Rect[STRETCH_SURFACE].right ?
 JLE SHORT check_ToRect_height ; jmp if yes
